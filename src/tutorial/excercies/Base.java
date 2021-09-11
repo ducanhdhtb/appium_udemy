@@ -20,15 +20,16 @@ public class Base {
 			cap.setCapability(MobileCapabilityType.AUTOMATION_NAME,Constant.AUTOMATION_NAME);//new step
 			driver = new AndroidDriver<>(new URL(Constant.URL_SERVER), cap);
 			System.out.println("Init Appium Server Succesfully!!");
+			System.out.println("Driver Property : " + driver);
 			return driver;
 		}
 		catch(Exception e) {
 			System.out.println("Exception : " + e.getMessage());
 			System.exit(0);
 		}
-		return driver;
-	
-		
+		return driver;	
 	}
+	
+
 
 }

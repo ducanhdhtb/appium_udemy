@@ -22,6 +22,7 @@ public class ecommerce_01 extends Base {
 		emulator.clickElement("resource-id", "com.androidsample.generalstore:id/btnLetsShop");
 
 
+
 	}
 
 }

@@ -37,7 +37,7 @@ public class ecommerce_02 extends tutorials.section07.ecommerce.HybridBase{
 		}
 
 		driver.findElement(By.id("com.androidsample.generalstore:id/appbar_btn_cart")).click();
-		Thread.sleep(25000);
+		Thread.sleep(10);
 		String lastpageText = driver.findElement(By.id("com.androidsample.generalstore:id/productName")).getText();
 		System.out.println("lastpageText: " + lastpageText);
 //		Assert.assertEquals("Jordan 6 Rings", lastpageText);

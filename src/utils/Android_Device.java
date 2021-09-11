@@ -1,22 +1,30 @@
 package utils;
 
+import static io.appium.java_client.touch.LongPressOptions.longPressOptions;
 import static io.appium.java_client.touch.offset.ElementOption.element;
 import static java.time.Duration.ofSeconds;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Point;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -25,6 +33,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileDriver;
+import io.appium.java_client.MobileElement;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;
@@ -39,14 +48,17 @@ import io.appium.java_client.touch.offset.PointOption;
 import tutorial.excercies.Base;
 import tutorial.excercies.Constant;
 
-import static io.appium.java_client.touch.LongPressOptions.longPressOptions;
-import static io.appium.java_client.touch.offset.ElementOption.element;
 
+//
+// text attribute can be used as “name”
+//resource-id attribute can be used as “id”
+//class attribute can be used as “className”
+//content-desc attribute can be used as “AccessibilityId”
 public class Android_Device extends Base{
 
 	public static AndroidDriver<AndroidElement> driver;
 	public final int timeOut = 40;
-	
+
 	public Android_Device(AndroidDriver<AndroidElement> driver) {
 		this.driver = driver;
 	}
@@ -60,6 +72,47 @@ public class Android_Device extends Base{
 		driver = new AndroidDriver<>(new URL(Constant.URL_SERVER), cap);
 		System.out.println("Init Succesfully!!");
 	}
+
+	public void sleepFor(int time) {
+		try {
+			Thread.sleep(1000 * time);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void captureScreenShot(String className, AppiumDriver ad) {
+		String destDir = "";
+		File scrFile = ((TakesScreenshot) ad).getScreenshotAs(OutputType.FILE);
+		DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy__hh_mm_ssaa");
+		destDir = "screenshots/BaseLine";
+		new File(destDir).mkdirs();
+		String destFile = className + ".png";
+		try {
+			FileUtils.copyFile(scrFile, new File(destDir + "/" + destFile));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	//    public void captureScreenShot(ITestResult result, String status) {
+	//        String destDir = "";
+	//        String passfailMethod = result.getMethod().getRealClass().getSimpleName() + "." + result.getMethod().getMethodName();
+	//        File scrFile = ((TakesScreenshot) ad).getScreenshotAs(OutputType.FILE);
+	//        DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy__hh_mm_ssaa");
+	//        if (status.equalsIgnoreCase("fail")) {
+	//            destDir = "screenshots/Failures";
+	//        } else if (status.equalsIgnoreCase("pass")) {
+	//            destDir = "screenshots/Success";
+	//        }
+	//        new File(destDir).mkdirs();
+	//        String destFile = passfailMethod + " - " + dateFormat.format(new Date()) + ".png";
+	//        try {
+	//            FileUtils.copyFile(scrFile, new File(destDir + "/" + destFile));
+	//        } catch (IOException e) {
+	//            e.printStackTrace();
+	//        }
+	//    }
 
 	/**
 	 * method verify whether element is present on screen
@@ -83,7 +136,7 @@ public class Android_Device extends Base{
 	/**
 	 * method to go back by Android Native back click
 	 */
-	
+
 	public void back() {
 		((AndroidDriver) driver).pressKey(new KeyEvent().withKey(AndroidKey.BACK));
 	}
@@ -105,89 +158,89 @@ public class Android_Device extends Base{
 		}
 	}
 
-	  /**
-     * method to tap on the screen on provided coordinates
-     *
-     * @param xPosition x coordinate to be tapped
-     * @param yPosition y coordinate to be tapped
-     */
-    public void tap(double xPosition, double yPosition) {
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        HashMap<String, Double> tapObject = new HashMap<String, Double>();
-        tapObject.put("startX", xPosition);
-        tapObject.put("startY", yPosition);
-        js.executeScript("mobile: tap", tapObject);
-    }
-    
-    /**
-     * method to find an element
-     *
-     * @param locator element to be found
-     * @return WebElement if found else throws NoSuchElementException
-     */
-    public WebElement findElement(By locator) {
-        try {
-            WebElement element = driver.findElement(locator);
-            return element;
-        } catch (NoSuchElementException e) {
-//            Log.logError(this.getClass().getName(), "findElement", "Element not found" + locator);
-            throw e;
-        }
-    }
+	/**
+	 * method to tap on the screen on provided coordinates
+	 *
+	 * @param xPosition x coordinate to be tapped
+	 * @param yPosition y coordinate to be tapped
+	 */
+	public void tap(double xPosition, double yPosition) {
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		HashMap<String, Double> tapObject = new HashMap<String, Double>();
+		tapObject.put("startX", xPosition);
+		tapObject.put("startY", yPosition);
+		js.executeScript("mobile: tap", tapObject);
+	}
 
-    
-    /**
-     * method to find all the elements of specific locator
-     *
-     * @param locator element to be found
-     * @return return the list of elements if found else throws NoSuchElementException
-     */
-    public List<AndroidElement> findElements(By locator) {
-        try {
-            List<AndroidElement> element = driver.findElements(locator);
-            return element;
-        } catch (NoSuchElementException e) {
-//            Log.logError(this.getClass().getName(), "findElements", "element not found" + locator);
-            throw e;
-        }
-    }
+	/**
+	 * method to find an element
+	 *
+	 * @param locator element to be found
+	 * @return WebElement if found else throws NoSuchElementException
+	 */
+	public WebElement findElement(By locator) {
+		try {
+			WebElement element = driver.findElement(locator);
+			return element;
+		} catch (NoSuchElementException e) {
+			//            Log.logError(this.getClass().getName(), "findElement", "Element not found" + locator);
+			throw e;
+		}
+	}
 
-    
-    /**
-     * method to get message test of alert
-     *
-     * @return message text which is displayed
-     */
-    public String getAlertText() {
-        try {
-            Alert alert = driver.switchTo().alert();
-            String alertText = alert.getText();
-            return alertText;
-        } catch (NoAlertPresentException e) {
-            throw e;
-        }
-    }
 
-    /**
-     * method to verify if alert is present
-     *
-     * @return returns true if alert is present else false
-     */
-    public boolean isAlertPresent() {
-        try {
-            WebDriverWait wait = new WebDriverWait(driver, timeOut);
-            wait.until(ExpectedConditions.alertIsPresent());
-            driver.switchTo().alert();
-            return true;
-        } catch (NoAlertPresentException e) {
-            throw e;
-        }
-    }
-    
-    /**
-     * method to click element by Xpath
-     * @param xPath
-     */
+	/**
+	 * method to find all the elements of specific locator
+	 *
+	 * @param locator element to be found
+	 * @return return the list of elements if found else throws NoSuchElementException
+	 */
+	public List<AndroidElement> findElements(By locator) {
+		try {
+			List<AndroidElement> element = driver.findElements(locator);
+			return element;
+		} catch (NoSuchElementException e) {
+			//            Log.logError(this.getClass().getName(), "findElements", "element not found" + locator);
+			throw e;
+		}
+	}
+
+
+	/**
+	 * method to get message test of alert
+	 *
+	 * @return message text which is displayed
+	 */
+	public String getAlertText() {
+		try {
+			Alert alert = driver.switchTo().alert();
+			String alertText = alert.getText();
+			return alertText;
+		} catch (NoAlertPresentException e) {
+			throw e;
+		}
+	}
+
+	/**
+	 * method to verify if alert is present
+	 *
+	 * @return returns true if alert is present else false
+	 */
+	public boolean isAlertPresent() {
+		try {
+			WebDriverWait wait = new WebDriverWait(driver, timeOut);
+			wait.until(ExpectedConditions.alertIsPresent());
+			driver.switchTo().alert();
+			return true;
+		} catch (NoAlertPresentException e) {
+			throw e;
+		}
+	}
+
+	/**
+	 * method to click element by Xpath
+	 * @param xPath
+	 */
 	public void clickByXpath(String xPath) {
 		if(waitForElementByXpath(xPath)) {
 			AndroidElement ele = driver.findElement(By.xpath(xPath));
@@ -199,163 +252,168 @@ public class Android_Device extends Base{
 			System.exit(0);
 		}
 	}
-	
-    /**
-     * method to Accept Alert if alert is present
-     */
 
-    public void acceptAlert() {
-        WebDriverWait wait = new WebDriverWait(driver, timeOut);
-        wait.until(ExpectedConditions.alertIsPresent());
-        driver.switchTo().alert().accept();
-    }
-    
-    /**
-     * method to Dismiss Alert if alert is present
-     */
+	/**
+	 * method to Accept Alert if alert is present
+	 */
 
-    public void dismissAlert() {
-        WebDriverWait wait = new WebDriverWait(driver, timeOut);
-        wait.until(ExpectedConditions.alertIsPresent());
-        driver.switchTo().alert().dismiss();
-    }
-    
-    
-    /**
-     * method to get network settings
-     */
-    public void getNetworkConnection() {
-        System.out.println(((AndroidDriver) driver).getConnection());
-    }
-    
+	public void acceptAlert() {
+		WebDriverWait wait = new WebDriverWait(driver, timeOut);
+		wait.until(ExpectedConditions.alertIsPresent());
+		driver.switchTo().alert().accept();
+	}
 
-    /**
-     * method to set network settings
-     *
-     * @param airplaneMode pass true to activate airplane mode else false
-     * @param wifi         pass true to activate wifi mode else false
-     * @param data         pass true to activate data mode else false
-     */
-    public void setNetworkConnection(boolean airplaneMode, boolean wifi, boolean data) {
+	/**
+	 * method to Dismiss Alert if alert is present
+	 */
 
-        long mode = 1L;
-
-        if (wifi) {
-            mode = 2L;
-        } else if (data) {
-            mode = 4L;
-        }
-
-        ConnectionState connectionState = new ConnectionState(mode);
-        ((AndroidDriver) driver).setConnection(connectionState);
-        System.out.println("Your current connection settings are :" + ((AndroidDriver) driver).getConnection());
-    }
-
-    
-    /**
-     * method to get all the context handles at particular screen
-     */
-    public void getContext() {
-        ((AppiumDriver) driver).getContextHandles();
-    }
-
-    /**
-     * method to set the context to required view.
-     *
-     * @param context view to be set
-     */
-    public void setContext(String context) {
-
-        Set<String> contextNames = ((AppiumDriver) driver).getContextHandles();
-
-        if (contextNames.contains(context)) {
-            ((AppiumDriver) driver).context(context);
-            System.out.println("Context changed successfully");
-        } else {
-        	System.out.println(context + "not found on this page");
-        }
-
-        System.out.println("Current context" + ((AppiumDriver) driver).getContext());
-    }
+	public void dismissAlert() {
+		WebDriverWait wait = new WebDriverWait(driver, timeOut);
+		wait.until(ExpectedConditions.alertIsPresent());
+		driver.switchTo().alert().dismiss();
+	}
 
 
-    /**
-     * method to long press on specific element by passing locator
-     *
-     * @param locator element to be long pressed
-     */
-    public void longPress(By locator) {
-        try {
-            WebElement element = driver.findElement(locator);
-            TouchAction touch = new TouchAction((MobileDriver) driver);
-            LongPressOptions longPressOptions = new LongPressOptions();
-            longPressOptions.withElement(ElementOption.element(element));
-            touch.longPress(longPressOptions).release().perform();
-            System.out.println("Long press successful on element: " + element);
-        } catch (NoSuchElementException e) {
-//        	System.out.println(this.getClass().getName(), "findElement", "Element not found" + locator);
-            throw e;
-        }
+	/**
+	 * method to get network settings
+	 */
+	public void getNetworkConnection() {
+		System.out.println(((AndroidDriver) driver).getConnection());
+	}
 
-    }
-    
-    /**
-     * method to long press on specific x,y coordinates
-     *
-     * @param x x offset
-     * @param y y offset
-     */
-    public void longPress(int x, int y) {
-        TouchAction touch = new TouchAction((MobileDriver) driver);
-        PointOption pointOption = new PointOption();
-        pointOption.withCoordinates(x, y);
-        touch.longPress(pointOption).release().perform();
-        System.out.println("Long press successful on coordinates: " + "( " + x + "," + y + " )");
-    }
-    
-    /**
-     * method to long press on element with absolute coordinates.
-     *
-     * @param locator element to be long pressed
-     * @param x       x offset
-     * @param y       y offset
-     */
-    public void longPress(By locator, int x, int y) {
-        try {
-            WebElement element = driver.findElement(locator);
-            TouchAction touch = new TouchAction((MobileDriver) driver);
-            LongPressOptions longPressOptions = new LongPressOptions();
-            longPressOptions.withPosition(new PointOption().withCoordinates(x, y)).withElement(ElementOption.element(element));
-            touch.longPress(longPressOptions).release().perform();
-            System.out.println("Long press successful on element: " + element + "on coordinates" + "( " + x + "," + y + " )");
-        } catch (NoSuchElementException e) {
-//            Log.logError(this.getClass().getName(), "findElement", "Element not found" + locator);
-            throw e;
-        }
 
-    }
-    
-    /**
-     * method to swipe on the screen on provided coordinates
-     *
-     * @param startX   - start X coordinate to be tapped
-     * @param endX     - end X coordinate to be tapped
-     * @param startY   - start y coordinate to be tapped
-     * @param endY     - end Y coordinate to be tapped
-     * @param duration duration to be tapped
-     */
+	/**
+	 * method to set network settings
+	 *
+	 * @param airplaneMode pass true to activate airplane mode else false
+	 * @param wifi         pass true to activate wifi mode else false
+	 * @param data         pass true to activate data mode else false
+	 */
+	public void setNetworkConnection(boolean airplaneMode, boolean wifi, boolean data) {
 
-    public void swipe(double startX, double startY, double endX, double endY, double duration) {
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        HashMap<String, Double> swipeObject = new HashMap<String, Double>();
-        // swipeObject.put("touchCount", 1.0);
-        swipeObject.put("startX", startX);
-        swipeObject.put("startY", startY);
-        swipeObject.put("endX", endX);
-        swipeObject.put("endY", endY);
-        swipeObject.put("duration", duration);
-        js.executeScript("mobile: swipe", swipeObject);
-    }
+		long mode = 1L;
+
+		if (wifi) {
+			mode = 2L;
+		} else if (data) {
+			mode = 4L;
+		}
+
+		ConnectionState connectionState = new ConnectionState(mode);
+		((AndroidDriver) driver).setConnection(connectionState);
+		System.out.println("Your current connection settings are :" + ((AndroidDriver) driver).getConnection());
+	}
+
+
+	/**
+	 * method to get all the context handles at particular screen
+	 */
+	public void getContext() {
+		((AppiumDriver) driver).getContextHandles();
+	}
+
+	/**
+	 * method to set the context to required view.
+	 *
+	 * @param context view to be set
+	 */
+	public void setContext(String context) {
+
+		Set<String> contextNames = ((AppiumDriver) driver).getContextHandles();
+
+		if (contextNames.contains(context)) {
+			((AppiumDriver) driver).context(context);
+			System.out.println("Context changed successfully");
+		} else {
+			System.out.println(context + "not found on this page");
+		}
+
+		System.out.println("Current context" + ((AppiumDriver) driver).getContext());
+	}
+
+
+	/**
+	 * method to long press on specific element by passing locator
+	 *
+	 * @param locator element to be long pressed
+	 */
+	public void longPress(By locator) {
+		try {
+			WebElement element = driver.findElement(locator);
+			TouchAction touch = new TouchAction((MobileDriver) driver);
+			LongPressOptions longPressOptions = new LongPressOptions();
+			longPressOptions.withElement(ElementOption.element(element));
+			touch.longPress(longPressOptions).release().perform();
+			System.out.println("Long press successful on element: " + element);
+		} catch (NoSuchElementException e) {
+			//        	System.out.println(this.getClass().getName(), "findElement", "Element not found" + locator);
+			throw e;
+		}
+
+	}
+
+	/**
+	 * method to long press on specific x,y coordinates
+	 *
+	 * @param x x offset
+	 * @param y y offset
+	 */
+	public void longPress(int x, int y) {
+		TouchAction touch = new TouchAction((MobileDriver) driver);
+		PointOption pointOption = new PointOption();
+		pointOption.withCoordinates(x, y);
+		touch.longPress(pointOption).release().perform();
+		System.out.println("Long press successful on coordinates: " + "( " + x + "," + y + " )");
+	}
+
+	/**
+	 * method to long press on element with absolute coordinates.
+	 *
+	 * @param locator element to be long pressed
+	 * @param x       x offset
+	 * @param y       y offset
+	 */
+	public void longPress(By locator, int x, int y) {
+		try {
+			WebElement element = driver.findElement(locator);
+			TouchAction touch = new TouchAction((MobileDriver) driver);
+			LongPressOptions longPressOptions = new LongPressOptions();
+			longPressOptions.withPosition(new PointOption().withCoordinates(x, y)).withElement(ElementOption.element(element));
+			touch.longPress(longPressOptions).release().perform();
+			System.out.println("Long press successful on element: " + element + "on coordinates" + "( " + x + "," + y + " )");
+		} catch (NoSuchElementException e) {
+			//            Log.logError(this.getClass().getName(), "findElement", "Element not found" + locator);
+			throw e;
+		}
+
+	}
+
+	/**
+	 * method to swipe on the screen on provided coordinates
+	 *
+	 * @param startX   - start X coordinate to be tapped
+	 * @param endX     - end X coordinate to be tapped
+	 * @param startY   - start y coordinate to be tapped
+	 * @param endY     - end Y coordinate to be tapped
+	 * @param duration duration to be tapped
+	 */
+
+	public void swipe(double startX, double startY, double endX, double endY, double duration) {
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		HashMap<String, Double> swipeObject = new HashMap<String, Double>();
+		// swipeObject.put("touchCount", 1.0);
+		swipeObject.put("startX", startX);
+		swipeObject.put("startY", startY);
+		swipeObject.put("endX", endX);
+		swipeObject.put("endY", endY);
+		swipeObject.put("duration", duration);
+		js.executeScript("mobile: swipe", swipeObject);
+	}
+
+	/**
+	 * Move to specific text
+	 * @param visibleText
+	 */
 
 	public void scrollToText(String visibleText) {
 		try {
@@ -365,6 +423,55 @@ public class Android_Device extends Base{
 		catch(Exception e) {
 			System.out.println(e);
 		}
+	}
+
+	/*
+	 * Get object information base on attribute 
+	 * @param type
+	 * @param attribute
+	 * */
+	public String uiGetObjectByAttribute(By type,String attribute) {
+		AndroidElement element = driver.findElement(type);
+		String ele = element.getAttribute(attribute);
+		return ele;
+	}
+	
+	public int[] uiGetLocationById(String resourceId) {
+		MobileElement element = (MobileElement) driver.findElementById(resourceId);
+		Point location_ = element.getLocation();
+		int[] coordinates = new int[2];
+		
+		String location = location_.toString();
+		String cordix = location.split(",")[0].replace("(", "").replaceAll(" ", "");
+		String cordiy = location.split(",")[1].replace(")", "").replaceAll(" ", "");
+		System.out.println(cordix);
+		System.out.println(cordiy);
+
+		int x = Integer.parseInt(cordix);
+		int y = Integer.parseInt(cordiy);
+	    coordinates[0] =  Integer.parseInt(cordix);
+	    coordinates[1] = Integer.parseInt(cordiy) ;
+	  
+	    return coordinates;
+	}
+	
+	public String uiGetObjectByAttributes(By type,String attribute,int occourence) {
+		List<AndroidElement> mobileElement = driver.findElements(type);
+		AndroidElement mobileElementIndex = mobileElement.get(occourence);
+		String ele = mobileElementIndex.getAttribute(attribute);
+		return ele;
+	}
+
+	/*
+	 * Get object information base on name 
+	 * @param  className
+	 * @param attribute
+	 * 
+	 *  */
+
+	public String uiGetObjectByName(String name,String textattribute) {
+		AndroidElement element = driver.findElementByClassName(name);
+		return element.getAttribute(textattribute);
 	}
 
 	/**
@@ -377,9 +484,23 @@ public class Android_Device extends Base{
 		driver.findElement(By.xpath(formatted)).click();
 
 	}
+	
+	public void clickElementByText(String value,int occourence) {
+		try {
+			String attribute = "text";
+			String formatted = String.format("//*[@%s = '%s']", attribute,value);
+			List<AndroidElement> mobileElement = driver.findElements(By.xpath(formatted));
+			mobileElement.get(occourence).click();
+			System.out.println("Click " + mobileElement.get(occourence).getText() + "Success!");			
+		}
+		catch(Exception e) {
+			System.out.println(e);
+		}
+	
+	}
 
 
-	public void clickElementById(String id,int occourence) throws InterruptedException {
+	public void clickElementById(String id,int occourence) {
 		try {
 			List<AndroidElement> mobileElement =  driver.findElements(By.id(id));
 			mobileElement.get(occourence).click();
@@ -472,8 +593,8 @@ public class Android_Device extends Base{
 	}
 
 	static String UiScrollable(String uiSelector) {
-        return "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(" + uiSelector + ".instance(0));";
-    }
+		return "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(" + uiSelector + ".instance(0));";
+	}
 
 	/**
 	 * method to launchApp
@@ -545,6 +666,39 @@ public class Android_Device extends Base{
 
 	public static void clickElementByClassName(AndroidDriver<AndroidElement>driver,String className) {
 		driver.findElementByClassName(className).click();
+	}
+
+	/**
+	 * Click Element by resource id with specific index
+	 * @param resourceId
+	 * @param index
+	 * */
+	public static void  clickElementByIdWithIndex(String resourceId,int index) {
+		try {
+			AndroidElement ele = driver.findElements(By.id(resourceId)).get(index);
+			ele.click();
+			System.out.println("Click Element with index : " + (index));
+		}
+		catch(Exception e) {
+			System.out.println(e);
+		}
+
+	}
+	/**
+	 * Click Element by text with specific index
+	 * @param resourceId
+	 * @param index
+	 * */
+
+	public static void  clickElementByTextWithIndex(String text,int index) {
+		try {
+			AndroidElement ele = driver.findElements(By.className(text)).get(index);
+			ele.click();
+			System.out.println("Click Element with index : " + (index));
+		}
+		catch(Exception e) {
+			System.out.println(e);
+		}
 	}
 	public void runApplication(String appPackage,String appActivy) throws IOException, InterruptedException {
 		executeCommand("adb shell am start -n " + appPackage + "/" + appActivy + "\"" );
