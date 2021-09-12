@@ -4,8 +4,11 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -14,10 +17,12 @@ import io.appium.java_client.MobileBy;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;
+import io.appium.java_client.android.nativekey.AndroidKey;
+import io.appium.java_client.android.nativekey.KeyEvent;
 import utils.Android_Device;
 
 
-public class ecommerce_04 extends Base{
+public class ecommerce_05 extends Base{
 	Android_Device emulator;
 	AndroidDriver<AndroidElement> driver;
 
@@ -33,10 +38,13 @@ public class ecommerce_04 extends Base{
 		this.driver = driver;
 		Android_Device emulator = new Android_Device(driver);
 		this.emulator = emulator;
+		
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 	}
 
 	@Test
 	public void f1() throws IOException, InterruptedException {
+		System.out.println("Run f1");
 		emulator.runApplicationByMonkeyTools("com.androidsample.generalstore");
 		driver.hideKeyboard();
 		driver.findElement(By.id("com.androidsample.generalstore:id/nameField")).sendKeys("Hello");
@@ -51,6 +59,7 @@ public class ecommerce_04 extends Base{
 
 	@Test
 	public void f2() throws IOException, InterruptedException {
+		System.out.println("Run f2");
 		emulator.goHome();
 		emulator.runApplicationByMonkeyTools("com.androidsample.generalstore");
 		emulator.clickElementById("com.androidsample.generalstore:id/productAddCart", 0);
@@ -77,18 +86,35 @@ public class ecommerce_04 extends Base{
 
 	@Test
 	public void f3() throws IOException, InterruptedException {
+		System.out.println("Run f3");
 		emulator.goHome();
 		emulator.runApplicationByMonkeyTools("com.androidsample.generalstore");
 		emulator.clickElement("class", "android.widget.CheckBox");
 		emulator.longPress(By.id("com.androidsample.generalstore:id/termsButton"));
 		emulator.clickElementByText("CLOSE", 0);
 		emulator.clickElementByText("Visit to the website to complete purchase", 0);
-//
-//		MobileElement element = (MobileElement) driver.findElementById("com.androidsample.generalstore:id/termsButton");
-//		int[] location = emulator.uiGetLocationById("com.androidsample.generalstore:id/termsButton");
-//		emulator.longPress(location[0], location[1]);
+		Thread.sleep(7000);
+		
 
 
+	}
+	
+	@Test
+	public void f4() throws InterruptedException {
+		System.out.println("Run f4");
+		// Web Gestures
+		Thread.sleep(15000);
+		Set<String> contexts = driver.getContextHandles();
+		for(String context : contexts) {
+			System.out.println(context);
+		}
+		
+		driver.context("WEBVIEW_com.androidsample.generalstore");
+		Thread.sleep(15000);
+		System.out.println("Get Currelt url : " + driver.getCurrentUrl());
+		driver.findElementByXPath("//*[@name = 'q']").sendKeys("Hello Wolrd");
+		driver.findElementByXPath("//*[@name = 'q']").sendKeys(Keys.ENTER);
+		driver.pressKey(new KeyEvent(AndroidKey.BACK));
 	}
 
 	public static double getAmount(String value)
