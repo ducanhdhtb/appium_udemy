@@ -12,7 +12,6 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;
 import utils.Android_Device;
 
-
 public class ecommerce_02 extends Base{
 
 

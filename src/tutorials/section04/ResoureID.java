@@ -18,9 +18,6 @@ public class ResoureID extends Base {
 		driver.findElementByXPath("//android.widget.ListView//android.widget.TextView[@text = 'Preference']"); // Lession 15 
 		driver.findElementByXPath("//android.widget.ListView//android.widget.TextView[@text = '3. Preference dependencies']");  // Lession 15
 		driver.findElementById("android:id/checkbox").click();  // Lession 16
-
 	}
 	
-	
-
 }

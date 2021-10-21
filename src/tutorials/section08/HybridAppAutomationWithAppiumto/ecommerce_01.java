@@ -1,51 +1,20 @@
 package tutorials.section08.HybridAppAutomationWithAppiumto;
 
-import static org.testng.Assert.assertEquals;
+import static io.appium.java_client.touch.LongPressOptions.longPressOptions;
+import static io.appium.java_client.touch.TapOptions.tapOptions;
+import static io.appium.java_client.touch.offset.ElementOption.element;
+import static java.time.Duration.ofSeconds;
+//import static org.testng.Assert.assertEquals;
 
 import java.net.MalformedURLException;
 import java.util.concurrent.TimeUnit;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-
-import io.appium.java_client.MobileBy;
-import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.AndroidElement;
-import junit.framework.Assert;
-import tutorial.excercies.Base;
-
-import java.net.MalformedURLException;
-
-import java.util.concurrent.TimeUnit;
-
-
 
 import org.openqa.selenium.By;
-
-import org.openqa.selenium.By.ByClassName;
-
 import org.openqa.selenium.WebElement;
-
-
-
-import io.appium.java_client.MobileBy;
 
 import io.appium.java_client.TouchAction;
-
 import io.appium.java_client.android.AndroidDriver;
-
 import io.appium.java_client.android.AndroidElement;
-
-import static io.appium.java_client.touch.TapOptions.tapOptions;
-
-import static io.appium.java_client.touch.offset.ElementOption.element;
-
-import static io.appium.java_client.touch.LongPressOptions.longPressOptions;
-
-import static java.time.Duration.ofSeconds;
-
-
-
-import junit.framework.Assert;
 
 
 public class ecommerce_01 extends tutorials.section07.ecommerce.HybridBase{
@@ -80,7 +49,7 @@ public class ecommerce_01 extends tutorials.section07.ecommerce.HybridBase{
 		total= total.substring(1);
 		double totalValue=Double.parseDouble(total);
 		System.out.println(totalValue+"Total value of products");
-		assertEquals(sum, totalValue); 
+//		assertEquals(sum, totalValue); 
 
 
 
@@ -95,17 +64,11 @@ public class ecommerce_01 extends tutorials.section07.ecommerce.HybridBase{
 	}
 
 	public static double getAmount(String value)
-
 	{
-
 		value= value.substring(1);
-
 		double amount2value=Double.parseDouble(value);
-
 		return amount2value;
 
 	}
-
-
 
 }
